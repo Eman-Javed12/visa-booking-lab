@@ -1,0 +1,7 @@
+node_modules
+lab.db
+lab.db-shm
+lab.db-wal
+vault.enc
+.lab.key
+clients.xlsx

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Payment Methods</title>
+<style>
+ *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:#f3f4f6;color:#1f2937}
+ header{background:#fff;border-bottom:1px solid #e5e7eb;padding:.8rem 1.4rem;display:flex;justify-content:space-between;align-items:center}
+ .brand{font-weight:800;font-size:1.3rem;color:#0f172a;letter-spacing:.5px} .brand i{color:#0ea5e9;font-style:normal}
+ main{max-width:620px;margin:1.5rem auto;padding:0 1rem}
+ .total{display:flex;justify-content:space-between;background:#fff;border:1px solid #e5e7eb;padding:.9rem 1.2rem;font-size:1.05rem}
+ .what{color:#6b7280;font-size:.85rem;margin:.4rem .2rem 1rem}
+ .box{background:#fff;border:1px solid #e5e7eb} .box h3{margin:0;padding:.8rem 1.2rem;border-bottom:1px solid #e5e7eb;font-size:1rem}
+ .pm{background:#0f172a;color:#fff;padding:.5rem 1.2rem;font-size:.85rem} .form{padding:1rem 1.2rem 1.4rem}
+ label{display:block;font-size:.8rem;margin:.8rem 0 .25rem;color:#4b5563}
+ input,select{width:100%;padding:.6rem .7rem;border:1px solid #d1d5db;border-radius:3px;font:inherit;background:#fff}
+ .row{display:flex;gap:.8rem}.row>*{flex:1}
+ button{font:inherit;cursor:pointer;border:0;border-radius:3px}
+ #paynow{width:100%;background:#2563eb;color:#fff;padding:.8rem;margin-top:1.2rem;font-weight:600}
+ #exit{background:#fff;border:1px solid #9ca3af;padding:.35rem 1rem}
+ #perr{color:#b91c1c;font-size:.85rem;min-height:1.2em;margin:.6rem 0 0}
+ #done{background:#fff;border:1px solid #16a34a;padding:1.4rem;text-align:center} #done h3{color:#166534;margin:.2rem 0 .6rem}
+ [hidden]{display:none!important}
+</style></head><body>
+<header><span class="brand">pay<i>nest</i></span><button id="exit">Exit</button></header>
+<main>
+ <div class="total"><span>Total</span><b id="amt">...</b></div>
+ <div class="what" id="what"></div>
+ <div class="box" id="cardbox"><h3>Pay with a new card</h3><div class="pm">Add new card</div>
+  <div class="form">
+   <label>Holder Name</label><input id="holder" autocomplete="off">
+   <label>Card Number</label><input id="num" inputmode="numeric" maxlength="23" autocomplete="off">
+   <div class="row"><div><label>Expiry Month</label><select id="mm"></select></div><div><label>Expiry Year</label><select id="yy"></select></div>
+    <div><label>Security Code</label><input id="cvv" inputmode="numeric" maxlength="4" autocomplete="off"></div></div>
+   <p id="perr"></p><button id="paynow">Pay now</button></div></div>
+ <div id="done" hidden><h3>Payment received</h3><p id="donetxt"></p><button id="back" style="background:#2563eb;color:#fff;padding:.6rem 1.4rem">Back to the portal</button></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const token = location.hash.slice(1), q = new URLSearchParams(location.search), kind = q.get('kind') || 'appointment', id = q.get('id');
+const api = (path, opts = {}) => fetch(path, { ...opts, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token } });
+$('mm').innerHTML = '<option value="">MM</option>' + Array.from({ length: 12 }, (_, i) => `<option>${String(i + 1).padStart(2, '0')}</option>`).join('');
+const y0 = new Date().getFullYear();
+$('yy').innerHTML = '<option value="">YYYY</option>' + Array.from({ length: 12 }, (_, i) => `<option>${y0 + i}</option>`).join('');
+$('num').oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 19).replace(/(.{4})/g, '$1 ').trim(); };
+(async () => {
+  const r = await api(`/api/portal/payinfo?kind=${kind}${id ? '&id=' + id : ''}`);
+  if (!r.ok) { $('amt').textContent = '-'; $('what').textContent = 'This payment is no longer available. Please sign in to the portal again.'; $('cardbox').hidden = true; return; }
+  const p = await r.json();
+  $('amt').textContent = `${p.currency} ${p.amount.toFixed(2)}`; $('what').textContent = `${p.title} - ${p.detail}`;
+  if (p.paid) { $('cardbox').hidden = true; $('done').hidden = false; $('donetxt').textContent = 'This payment has already been completed.'; }
+})();
+$('paynow').onclick = async () => {
+  const err = !$('holder').value.trim() ? 'Please enter the card holder name.'
+    : !$('num').value.replace(/\s/g, '') ? 'Please enter the card number.'
+    : !$('mm').value || !$('yy').value ? 'Please choose the card expiry date.'
+    : !$('cvv').value.trim() ? 'Please enter the security code.' : '';
+  $('perr').textContent = err; if (err) return;
+  $('paynow').disabled = true;
+  const r = await api('/api/pay', { method: 'POST', body: JSON.stringify({ kind, id: id ? +id : undefined }) });   // card details are never sent anywhere
+  if (!r.ok) { $('perr').textContent = r.status === 401 ? 'Your session has expired. Please sign in to the portal again.' : 'The payment could not be completed.'; $('paynow').disabled = false; return; }
+  $('num').value = $('cvv').value = ''; $('cardbox').hidden = true; $('done').hidden = false;
+  $('donetxt').textContent = kind === 'insurance' ? 'Your travel medical insurance is now active.' : 'Your appointment is now confirmed.';
+};
+$('exit').onclick = $('back').onclick = () => { window.close(); setTimeout(() => { location.href = '/site.html'; }, 300); };
+</script></body></html>

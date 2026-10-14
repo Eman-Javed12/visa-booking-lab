@@ -1,0 +1,24 @@
+{
+  "name": "booking-lab",
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "npx playwright install chromium",
+    "sample": "tsx scripts/make-sample.ts",
+    "creds": "tsx scripts/creds.ts",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx server.ts"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "playwright": "^1.49.0",
+    "puppeteer-core": "^24.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

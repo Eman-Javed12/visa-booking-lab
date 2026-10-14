@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Greece Visa Automation</title>
+<style>
+ *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:linear-gradient(135deg,#bcd3ee,#5b8fd6);min-height:100vh;color:#1f2937}
+ .win{background:#fff;border-radius:8px;box-shadow:0 10px 40px #0005;overflow:hidden;margin:1.2rem auto}
+ .title{background:#0078d4;color:#fff;padding:.45rem .8rem;font-size:.85rem;display:flex;justify-content:space-between}
+ #license{max-width:390px;margin-top:8vh} #main{max-width:1240px} .pad{padding:1rem 1.4rem;text-align:center}
+ h1{margin:.4rem 0 0;font-size:1.3rem;color:#1e3a8a;letter-spacing:.3px} .sub{font-size:.8rem;color:#6b7280;margin:.2rem 0 .6rem}
+ header{border-bottom:2px solid #0078d4;padding-bottom:.4rem;text-align:center}
+ .lab{display:inline-block;background:#fef3c7;color:#92400e;font-size:.7rem;padding:.05rem .4rem;border-radius:4px;vertical-align:middle}
+ .tools{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:.9rem 0 .3rem}
+ button{font:inherit;font-size:.85rem;padding:.35rem .9rem;border:1px solid #1e3a5f;color:#1e3a5f;background:#fff;border-radius:4px;cursor:pointer}
+ button:hover{background:#f1f5f9} button:disabled{opacity:.5;cursor:default} .g{border-color:#16a34a;color:#16a34a}.r{border-color:#f5a3a3;color:#dc2626}
+ .em{background:#dc2626;color:#fff;border-color:#dc2626}.em:hover{background:#b91c1c}
+ .toggles{display:flex;gap:1.4rem;justify-content:center;font-size:.85rem;margin-bottom:.6rem;align-items:center}
+ .sw{display:inline-flex;align-items:center;gap:.4rem;cursor:pointer}
+ .sw input{appearance:none;width:34px;height:18px;background:#cbd5e1;border-radius:9px;position:relative;cursor:pointer;margin:0;transition:.15s}
+ .sw input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.15s}
+ .sw input:checked{background:#0078d4}.sw input:checked::after{left:18px}
+ .tablewrap{margin:0 1rem;height:250px;overflow:auto;background:#f8fafc;border:1px solid #e5e7eb}
+ table{width:100%;border-collapse:collapse;font-size:.8rem} th{position:sticky;top:0;background:#e8eef7;text-align:left;padding:.45rem .5rem;font-size:.7rem;color:#475569;letter-spacing:.5px}
+ td{padding:.35rem .5rem;border-bottom:1px solid #eef2f7;background:#fff} .acct{font-weight:700} .nm{font-weight:400;color:#6b7280;font-size:.7rem}
+ .ctr{font-size:.68rem;line-height:1.1} .badge{background:#16a34a;color:#fff;font-size:.65rem;padding:.15rem .5rem;font-weight:700} .proxy{color:#2563eb;font-size:.65rem}
+ .st{font-weight:600}.st.run{color:#b45309}.st.ok{color:#15803d}.st.bad{color:#dc2626}.st.idle{color:#6b7280}
+ .bar{width:90px;height:7px;background:#e5e7eb;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:#2563eb}
+ td button{padding:.2rem .5rem;font-size:.72rem;margin-right:.15rem}
+ .panels{display:flex;gap:.8rem;margin:.8rem 1rem 0;flex-wrap:wrap}
+ .box{flex:1;min-width:270px;border:1px solid #e5e7eb;border-radius:6px;padding:.6rem .8rem;font-size:.78rem}
+ .box h4{margin:0 0 .45rem;font-size:.65rem;color:#6b7280;letter-spacing:1px}
+ .box label{display:flex;justify-content:space-between;align-items:center;margin:.2rem 0;gap:.5rem}
+ .box input[type=number],.box select,.box input[type=text]{width:90px;padding:.15rem .3rem;font:inherit}
+ .box .btnrow{display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap}
+ .bottom{display:flex;gap:1.4rem;margin:.8rem 1rem;padding:.8rem;border:1px solid #e5e7eb;border-radius:6px}
+ .bottom h4{margin:0 0 .4rem;font-size:.65rem;color:#6b7280;letter-spacing:1px}
+ .src{display:grid;grid-template-columns:auto auto auto;gap:.4rem;align-items:center;font-size:.7rem;color:#6b7280}
+ #log{background:#0f172a;color:#e2e8f0;font:11px Consolas,monospace;padding:.5rem;height:112px;overflow:auto;white-space:pre-wrap;flex:1;border-radius:3px}
+ .runs{margin:.8rem 1rem 0;overflow:auto;max-height:190px;border:1px solid #e5e7eb} .runs td,.runs th{white-space:nowrap}
+ .pass{color:#15803d;font-weight:700}.fail{color:#dc2626;font-weight:700}
+ .status{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.3rem 1rem .6rem;font-size:.7rem;color:#64748b}.status b{color:#1e3a8a}
+ input.f{display:block;width:100%;margin:.5rem 0;padding:.5rem;border:1px solid #cbd5e1;border-radius:4px;font:inherit;font-size:.9rem}
+ .lrow{display:flex;align-items:center;gap:.6rem;text-align:left}.lrow label{width:70px;font-size:.85rem}.lrow .f{margin:.35rem 0}.lrow a{font-size:.8rem;color:#1e3a5f}
+ .signin{width:100%;background:#1e3a5f;color:#fff;padding:.7rem;margin-top:.6rem;font-size:.95rem} #lerr{color:#dc2626;font-size:.8rem;min-height:1.1em}
+ .toast{position:fixed;right:16px;bottom:16px;background:#1f2937;color:#fff;border-radius:6px;padding:.7rem 1rem;font-size:.82rem;box-shadow:0 6px 24px #0006;max-width:340px;z-index:99}
+ .toast b{display:block;margin-bottom:.2rem}
+ #labbtn{margin-left:.6rem}
+ [hidden]{display:none!important}
+</style></head><body>
+
+<div class="win" id="license"><div class="title"><span>Greece Visa Automation - License</span><span>✕</span></div>
+ <div class="pad"><h1>GREECE VISA AUTOMATION</h1><div class="sub">License verification</div>
+  <div class="lrow"><label>Username:</label><input class="f" id="lu"></div><div class="lrow"><label>Password:</label><input class="f" id="lp" type="password"><a href="#" id="show-pw">Show</a></div>
+  <div id="lerr"></div><button class="signin" id="lbtn">Sign In</button></div></div>
+
+<div class="win" id="main" hidden><div class="title"><span>Greece Visa Automation</span><span>–&nbsp;&nbsp;☐&nbsp;&nbsp;✕</span></div>
+ <header><h1>GREECE VISA AUTOMATION</h1>
+  <div class="sub">PK appointment scheduling &mdash; multi profile control center</div>
+  <div class="tools">
+   <button data-top="open">Open Selected</button><button class="g" data-top="start">Start Selected</button>
+   <button class="r" data-top="stop">Stop Selected</button><button class="r" data-top="close">Close Selected</button>
+   <button class="r" data-top="stopAll">Stop All</button><button class="em" id="em">EMERGENCY STOP</button></div>
+  <div class="toggles"><label class="sw"><input type="checkbox" id="all"> Select All Profiles</label>
+   <label class="sw"><input type="checkbox" id="show" checked> Show browser windows</label>
+   <button id="labbtn">Tools &#9662;</button></div></header>
+
+ <div class="tablewrap"><table><thead><tr><th>SELECT</th><th>#</th><th>PORTAL</th><th>ACCOUNT</th><th>CENTER</th><th>PROXY</th><th>STATUS</th><th>TIMER</th><th>ACTIONS</th></tr></thead>
+  <tbody id="rows"></tbody></table></div>
+
+ <div id="lab" hidden>
+ <div class="panels">
+  <div class="box"><h4>SCHEDULER</h4>
+   <label>Engine <select id="eng"><option value="playwright">Playwright</option><option value="puppeteer">Puppeteer</option></select></label>
+   <label>Max concurrent <input type="number" id="mc" value="10" min="1" max="20"></label>
+   <label>Admit per minute <input type="number" id="apm" value="300" min="1"></label>
+   <label>Step delay (ms) <input type="number" id="pace" value="700" min="0" max="5000"></label>
+   <div class="btnrow"><button id="apply">Apply</button><button id="canary">Run canary</button></div><div id="cres" class="nm"></div></div>
+  <div class="box"><h4>FAULT INJECTION</h4>
+   <label>Require OTP verification <input type="checkbox" id="f-otpreq"></label>
+   <label>OTP delay (s) <input type="number" id="f-otp" value="0" min="0" max="10"></label>
+   <label>OTP duplicates + stale <input type="checkbox" id="f-dup"></label>
+   <label>OTP lifetime (s) <input type="number" id="f-ttl" value="60" min="3"></label>
+   <label>DOM change <select id="f-drift"><option value="off">off</option><option value="layout">layout only</option><option value="rename">renamed controls</option></select></label>
+   <label>Route loss % <input type="number" id="f-loss" value="0" min="0" max="50"></label>
+   <label>Crash after commit % <input type="number" id="f-crash" value="0" min="0" max="100"></label>
+   <label>Security check % <input type="number" id="f-chal" value="0" min="0" max="100"></label>
+   <label>Session invalidation % <input type="number" id="f-inv" value="0" min="0" max="50"></label>
+   <div class="btnrow"><button id="fapply">Apply faults</button><button id="fclear">All off</button></div></div>
+  <div class="box"><h4>BENCHMARK (validation plan)</h4>
+   <label>Engines <span><label class="sw" style="display:inline-flex"><input type="checkbox" id="b-pw" checked> PW</label> <label class="sw" style="display:inline-flex"><input type="checkbox" id="b-pp" checked> PPT</label></span></label>
+   <label>Users <input type="text" id="b-sizes" value="1,5,10,20"></label>
+   <div class="nm">Runs headless with fresh browsers. Uses the faults set here (except security checks).</div>
+   <div class="btnrow"><button class="g" id="brun">Run benchmark</button><a href="/api/panel/report.csv" style="font-size:.75rem;align-self:center">Download CSV</a></div><div id="bstat" class="nm"></div></div>
+ </div>
+
+ <div class="runs"><table><thead><tr><th>ENGINE</th><th>USERS</th><th>DONE</th><th>RATE</th><th>P95 ms</th><th>AVG ms</th><th>CPU s</th><th>HEAP MB</th><th>NODE MB</th><th>QUEUE ms</th><th>OTP ms</th><th>RESTR.</th><th>$/DONE</th><th>DBL</th><th>MULTI</th><th>MISMATCH</th><th>UNRECON.</th><th>BAD OTP</th><th>RESULT</th></tr></thead>
+  <tbody id="runs"><tr><td colspan="19" class="nm">No benchmark runs yet</td></tr></tbody></table></div>
+
+ </div>
+
+ <div class="bottom"><div><h4>DATA SOURCES</h4><div class="src">
+   <button id="load">Load Excel</button><button class="g" id="add">Add Excel</button><span id="fname">No file selected</span>
+   <button id="lproxy" disabled title="Disabled: every profile connects directly">Load Proxies</button><button class="r" id="clear">Clear</button><span>No file selected</span>
+   <button id="reset">Reset Site</button><a href="/api/panel/sample.xlsx" style="font-size:.7rem">Download sample Excel</a><span></span></div>
+   <input type="file" id="xl" accept=".xlsx" hidden></div>
+  <div style="flex:1;display:flex;flex-direction:column"><h4>SYSTEM LOG</h4><div id="log"></div></div></div>
+ <div class="status"><span id="s1"></span><span id="s2"></span><span id="s3"></span></div></div>
+
+<div class="toast" id="toast" hidden></div>
+<script>
+const $ = s => document.querySelector(s);
+const prev = new Map(); let toastTimer = null;
+function toast(title, text) { const t = $('#toast'); t.innerHTML = '<b></b><span></span>'; t.firstChild.textContent = title; t.lastChild.textContent = text; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 7000); }
+$('#labbtn').onclick = () => { const l = $('#lab'); l.hidden = !l.hidden; $('#labbtn').innerHTML = l.hidden ? 'Tools &#9662;' : 'Tools &#9652;'; };
+const sel = new Set(); let mode = 'load', last = '', lastRuns = '';
+const post = (path, body) => fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body || {}) });
+const act = (action, ids) => post('/api/panel/action', { action, ids });
+const settings = () => post('/api/panel/settings', { showBrowsers: $('#show').checked, engine: $('#eng').value, maxConcurrent: +$('#mc').value, admitPerMin: +$('#apm').value, pace: +$('#pace').value });
+
+$('#lbtn').onclick = async () => {
+  const r = await post('/api/panel/license', { username: $('#lu').value.trim(), password: $('#lp').value });
+  if (r.ok) { $('#license').hidden = true; $('#main').hidden = false; settings(); tick(); } else $('#lerr').textContent = 'Invalid license';
+};
+$('#show-pw').onclick = e => { e.preventDefault(); const i = $('#lp'); i.type = i.type === 'password' ? 'text' : 'password'; };
+$('#lp').onkeydown = e => { if (e.key === 'Enter') $('#lbtn').click(); };
+document.querySelectorAll('[data-top]').forEach(b => b.onclick = () => act(b.dataset.top, [...sel]));
+$('#all').onchange = e => document.querySelectorAll('.pick').forEach(c => { c.checked = e.target.checked; c.onchange(); });
+$('#show').onchange = settings; $('#apply').onclick = settings;
+let halted = false;
+$('#em').onclick = async () => { await post('/api/panel/emergency', { on: halted }); };
+$('#canary').onclick = async () => { $('#cres').textContent = 'Checking...'; const r = await (await post('/api/panel/canary')).json();
+  $('#cres').textContent = r.error ? r.error : r.ok ? 'Canary passed' : 'Canary FAILED: missing ' + r.missing.join(', '); };
+const fv = () => ({ requireOtp: $('#f-otpreq').checked, otpDelaySec: +$('#f-otp').value, otpDuplicate: $('#f-dup').checked, otpTtlSec: +$('#f-ttl').value, domDrift: $('#f-drift').value,
+  routeLossPct: +$('#f-loss').value, crashAfterCommitPct: +$('#f-crash').value, challengePct: +$('#f-chal').value, invalidatePct: +$('#f-inv').value });
+$('#fapply').onclick = () => post('/api/panel/faults', fv());
+$('#fclear').onclick = () => { ['f-otp','f-loss','f-crash','f-chal','f-inv'].forEach(i => $('#'+i).value = 0); $('#f-ttl').value = 60; $('#f-dup').checked = false; $('#f-otpreq').checked = false; $('#f-drift').value = 'off'; post('/api/panel/faults', fv()); };
+$('#brun').onclick = () => post('/api/panel/benchmark', { engines: [$('#b-pw').checked && 'playwright', $('#b-pp').checked && 'puppeteer'].filter(Boolean),
+  sizes: $('#b-sizes').value.split(',').map(x => +x.trim()).filter(Boolean) });
+$('#load').onclick = () => { mode = 'load'; $('#xl').click(); };
+$('#add').onclick = () => { mode = 'add'; $('#xl').click(); };
+$('#clear').onclick = async () => { await post('/api/panel/clear'); sel.clear(); $('#fname').textContent = 'No file selected'; };
+$('#reset').onclick = () => post('/api/panel/reset-site');
+$('#xl').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = await fetch(`/api/panel/excel?mode=${mode}&name=${encodeURIComponent(f.name)}`, { method: 'POST', headers: { 'content-type': 'application/octet-stream' }, body: await f.arrayBuffer() });
+  if (r.ok) $('#fname').textContent = f.name; else alert((await r.json()).error);
+  e.target.value = '';
+};
+$('#rows').onclick = e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act, [+b.dataset.id]); };
+
+const cls = s => /fail|missing|denied/i.test(s) ? 'bad' : /claimed|ready|running|paid/i.test(s) ? 'ok' : /idle|closed|stopped/i.test(s) ? 'idle' : 'run';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+async function tick() {
+  if ($('#main').hidden) return;
+  const s = await (await fetch('/api/panel/state')).json();
+    s.profiles.forEach(p => {
+    const before = prev.get(p.id) || '';
+    if (/^Claimed/.test(p.status) && !/^Claimed/.test(before)) toast('Greece Visa Bot', `Appointment claimed for ${p.name}: complete payment in the open browser to finalize.`);
+    if (/^Paid/.test(p.status) && !/^Paid/.test(before)) toast('Greece Visa Bot', `Payment received for ${p.name}: appointment confirmed.`);
+    prev.set(p.id, p.status); });
+  halted = s.halted; $('#em').textContent = halted ? 'RESUME' : 'EMERGENCY STOP';
+  $('#rows').innerHTML = s.profiles.map(p => `<tr>
+   <td><label class="sw"><input type="checkbox" class="pick" data-id="${p.id}" ${sel.has(p.id) ? 'checked' : ''}></label></td>
+   <td>${p.id}</td><td><span class="badge">${p.portal}</span></td><td class="acct">${esc(p.account)}<br><span class="nm">${esc(p.name)}</span></td>
+   <td class="ctr">${p.center[0]}<br>${p.center[1]}</td><td class="proxy">${p.proxy}</td>
+   <td class="st ${cls(p.status)}">${esc(p.error ? p.status + ': ' + p.error : p.status)}</td>
+   <td><div class="bar"><i style="width:${p.progress}%"></i></div>${p.elapsed != null ? (p.elapsed / 1000).toFixed(1) + 's' : ''}</td>
+   <td>${['open', 'start', 'stop', 'close', 'reload'].map(a => `<button data-act="${a}" data-id="${p.id}" class="${a === 'start' ? 'g' : a === 'stop' || a === 'close' ? 'r' : ''}">${a[0].toUpperCase() + a.slice(1)}</button>`).join('')}</td></tr>`).join('');
+  document.querySelectorAll('.pick').forEach(c => c.onchange = () => { c.checked ? sel.add(+c.dataset.id) : sel.delete(+c.dataset.id); });
+  const a = s.audit;
+  $('#s1').textContent = `Active Browsers: ${s.activeBrowsers}  ·  Running: ${s.running}  ·  Queued: ${s.queued}`;
+  $('#s2').innerHTML = `Booked (DB): <b>${a.booked}</b> · p95: <b>${s.p95ms ?? '-'} ms</b> · Double-allocated: <b>${a.doubleAllocated}</b> · Multi-booked: <b>${a.multiBooked}</b> · Unreconciled: <b>${a.unreconciled}</b> · OTP rejected: <b>${s.stats.otpRejected}</b> · 429s: <b>${s.stats.rateLimited}</b> · Bans: <b>${s.stats.bans}</b>`;
+  $('#s3').innerHTML = `Total Profiles: <b>${s.profiles.length}</b>`;
+  $('#bstat').textContent = s.bench.running ? 'Running: ' + s.bench.label : ''; $('#brun').disabled = s.bench.running;
+  const rj = JSON.stringify(s.runs);
+  if (rj !== lastRuns) { lastRuns = rj; if (s.runs.length) $('#runs').innerHTML = s.runs.map(r => `<tr><td>${r.engine}</td><td>${r.users}</td><td>${r.completed}</td><td>${r.completionRate}%</td><td>${r.p95ms ?? '-'}</td><td>${r.avgMs ?? '-'}</td><td>${r.cpuSec}</td><td>${r.peakHeapMB}</td><td>${r.peakNodeRssMB}</td><td>${r.maxQueueMs}</td><td>${r.avgOtpMs}</td><td>${r.restrictions}</td><td>${r.costPerCompletionUSD ?? '-'}</td><td>${r.doubleAllocated}</td><td>${r.multiBooked}</td><td>${r.slotMismatch + r.phantom}</td><td>${r.unreconciled}</td><td>${r.invalidOtpAccepted}</td><td class="${r.pass ? 'pass' : 'fail'}">${r.pass ? 'PASS' : 'FAIL'}</td></tr>`).join(''); }
+  const text = s.log.join('\n');
+  if (text !== last) { last = text; $('#log').textContent = text; $('#log').scrollTop = 1e9; }
+}
+setInterval(tick, 800);
+</script></body></html>

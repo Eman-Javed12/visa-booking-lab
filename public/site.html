@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Appointment Portal</title>
+<style>
+ *{box-sizing:border-box} body{margin:0;font-family:Roboto,"Segoe UI",system-ui,sans-serif;color:#4b5563;background:#f1f3f6;font-size:14px}
+ h1,h2,h3{font-weight:500} a{color:#2b8bd8;text-decoration:none;cursor:pointer}
+ input,select,button{font:inherit;padding:.5rem .7rem;width:100%;border:1px solid #d1d5db;border-radius:3px;background:#fff}
+ button{background:#2b8bd8;color:#fff;border:0;cursor:pointer;width:auto;padding:.5rem 1.1rem} input[type=checkbox]{width:auto;margin-right:.4rem}
+ button.sec{background:#fff;color:#374151;border:1px solid #9ca3af} button.sm{padding:.25rem .7rem;font-size:.78rem}
+ label{display:block;font-size:.85rem;margin:.8rem 0 .25rem;font-weight:600}
+ .center{display:flex;justify-content:center;padding:2.5rem 1rem}
+ .logincard{background:#fff;border:1px solid #e5e7eb;width:340px;padding:1.6rem 1.8rem;text-align:center;box-shadow:0 1px 3px #0001}
+ .logincard h2{margin:0 0 1rem;font-size:1.1rem} .logincard .in{margin:.6rem 0} .logincard a{display:block;margin-top:.7rem;font-size:.85rem}
+ .portal{display:flex;min-height:100vh}
+ #side{width:250px;background:#2b2b2b;color:#fff;font-size:.88rem;flex:none;display:flex;flex-direction:column}
+ #side .logo{height:96px;margin:0 0 .9rem;border-right:1px solid #555;border-bottom:1px solid #555}
+ #side .u{padding:.4rem .9rem;color:#e5483f;font-size:.82rem;font-weight:700} #side .u b{display:block;font-weight:400;margin-top:.15rem}
+ #side div.m{padding:.7rem .9rem;border-bottom:1px solid #444;background:#333;font-weight:600;cursor:pointer}
+ #side div.m:not(.on):hover{background:#3d3d3d} #side .on{background:#fff;color:#2b8bd8}
+ #side .foot{margin-top:auto;padding:1rem;font-size:.7rem;color:#9ca3af} #side .foot a{color:#9ca3af}
+ .content{flex:1;min-width:0}
+ .top{background:#fff;border-bottom:1px solid #e5e7eb;padding:.6rem 1rem;font-size:1.2rem;color:#6b7280}
+ .page{padding:1.2rem 1.6rem} .page h2{margin:.2rem 0;color:#6b7280;font-size:1.1rem} .crumb{font-size:.75rem;color:#6b7280;margin-bottom:.8rem}
+ .notice{background:#4584b6;color:#fff;padding:.7rem 1rem;font-size:.82rem;margin:.6rem 0}
+ .vac{margin:1rem 0 .4rem;color:#555} .vac b{color:#333}
+ .row{display:flex;gap:.8rem}.row>*{flex:1;min-width:0} .phone{display:flex;gap:.5rem}.phone select{width:150px;flex:none}
+ .ci{color:#2b8bd8;text-align:center;font-size:1.35rem;margin:1.4rem 0 .5rem}
+ .cip{text-align:center;font-weight:700;color:#4b5563;margin-bottom:.8rem}
+ #v-form label{color:#555;font-weight:600;font-size:.95rem}
+ #v-form input:not([type=checkbox]),#v-form select{background-color:#fdf1df;border:1px solid #f0e0c8;height:2.6rem}
+ #v-form select{appearance:none;padding-right:2.6rem;background-image:linear-gradient(#e6d6bd,#e6d6bd),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 2.1rem top 15%,right .8rem center;background-size:1px 70%,10px 6px}
+ #v-form input[readonly]{color:#8a8a8a} .narrow{max-width:600px} .up{text-transform:uppercase}
+ .cgrid{display:grid;grid-template-columns:1.1fr 1.1fr 1.15fr 1.2fr 1.25fr .85fr 1.2fr;gap:.4rem;align-items:center;max-width:1000px;margin:0 auto}
+ .cgrid.hdr span{text-align:center;font-weight:700;font-size:.78rem;color:#555}
+ .dt{position:relative} .dt input:not([type=date]){padding-right:2.2rem} .dt input[type=date]{position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;padding:0;border:0}
+ .dt .cal{position:absolute;right:.55rem;top:50%;transform:translateY(-50%);width:20px;height:20px;cursor:pointer;fill:#6b7280}
+ .drow{display:flex;gap:.9rem;align-items:center} .drow .dt{width:360px}
+ button.srch{background:#46b8da;padding:.55rem 1.1rem}
+ .terms{display:flex;align-items:flex-start;gap:.3rem;font-weight:400;margin:.9rem 0 0;font-size:.85rem}
+ button.red{background:#bb0a0a;width:100%;margin-top:.8rem;padding:.85rem 1.4rem;font-weight:700;letter-spacing:.3px}
+ .fb{background:#2b8bd8;margin-top:1.2rem}
+ .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1rem 0} .cardx{background:#fff;border:1px solid #e5e7eb;padding:1rem}
+ .cardx b{display:block;font-size:1.6rem;color:#1f2a37} .cardx span{font-size:.8rem;color:#6b7280}
+ table.tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb;margin-top:.8rem;font-size:.82rem}
+ .tbl th{background:#f3f4f6;text-align:left;padding:.55rem .7rem;font-size:.75rem;color:#6b7280} .tbl td{padding:.55rem .7rem;border-top:1px solid #eef0f3}
+ .pill{display:inline-block;padding:.1rem .55rem;border-radius:10px;font-size:.72rem;font-weight:600;background:#fef9c3;color:#854d0e} .pill.ok{background:#dcfce7;color:#166534}
+ .empty{background:#fff;border:1px solid #e5e7eb;padding:1.2rem;color:#6b7280;margin-top:.8rem}
+ .tl{list-style:none;padding:0;margin:1rem 0} .tl li{padding:.55rem .8rem;border-left:4px solid #d1d5db;margin:.3rem 0;background:#fff;font-size:.85rem}
+ .tl li.done{border-color:#16a34a} .tl li.cur{border-color:#2b8bd8;font-weight:600}
+ .slotsarea{display:grid;grid-template-columns:200px 1fr 300px;gap:1.4rem;align-items:start}
+ #weekdays{list-style:none;padding:0;margin:.8rem 0} #weekdays li{padding:.45rem .7rem;border-bottom:1px solid #e5e7eb;font-size:.8rem}
+ #weekdays li.on{background:#1f2a37;color:#fff}
+ .legend{display:flex;gap:1rem;font-size:.75rem;margin:.6rem 0} .legend i{display:inline-block;width:12px;height:12px;vertical-align:middle;margin-right:.3rem;border:1px solid #16a34a}
+ .legend i.b{border-color:#9ca3af;background:#d1d5db}
+ .grid{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+ .grid button{width:100%;background:#fff;color:#374151;border:1px solid #86efac;padding:.35rem .2rem;font-size:.75rem;border-radius:2px}
+ .grid button.sel{background:#16a34a;color:#fff;border-color:#16a34a} .grid button:disabled{background:#d1d5db;color:#6b7280;border-color:#9ca3af;cursor:not-allowed}
+ .side-r{position:sticky;top:.8rem;align-self:start}
+ .tip{font-size:.78rem;color:#6b7280;margin:.3rem 0}
+ #chosen{border:1px solid #16a34a;background:#f0fdf4;padding:.6rem;font-size:.82rem;margin:.6rem 0}
+ #pickhint{border:1px solid #facc15;background:#fefce8;padding:.6rem;font-size:.82rem;margin:.6rem 0}
+ #nodate{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:.7rem;margin:.8rem 0;font-size:.85rem}
+ #challenge{background:#fff7ed;border:1px solid #fb923c;padding:.8rem;margin:.6rem 0}
+ #message{position:fixed;left:0;right:0;bottom:0;text-align:center;color:#991b1b;font-weight:600;background:#fee2e2cc;padding:.3rem;pointer-events:none}
+ #message:empty{display:none}
+ #botbadge{position:fixed;top:10px;right:10px;background:#111827;color:#a7f3d0;font:600 12px Consolas,monospace;padding:.35rem .6rem;border-radius:3px;z-index:50;pointer-events:none}
+ #modal{position:fixed;inset:0;background:#0007;display:flex;align-items:flex-start;justify-content:center;padding-top:3rem;z-index:40}
+ #modal .box{background:#fff;width:520px;max-width:94vw;padding:1.1rem 1.4rem;border-radius:3px;font-size:.82rem}
+ #modal h3{margin:0 0 .6rem;font-size:1rem;display:flex;justify-content:space-between} .btns{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem}
+ body[data-drift=layout] #side{order:2} body[data-drift=layout] button{background:#7c3aed;border-radius:20px}
+ [hidden]{display:none!important}
+ @media(max-width:900px){.slotsarea,.cards{grid-template-columns:1fr}}
+
+ /* ---- compact booking page + blank space at the end ---- */
+ .page{padding-bottom:50vh}
+ #v-form h2{font-size:1rem;margin:0}
+ #v-form .crumb{margin-bottom:.3rem}
+ #v-form .notice{padding:.4rem .7rem;font-size:.72rem;margin:.3rem 0}
+ #v-form .vac{margin:.4rem 0 .2rem;font-size:.8rem}
+ #v-form label{font-size:.8rem;margin:.4rem 0 .15rem}
+ #v-form input:not([type=checkbox]),#v-form select{height:2rem;padding:.2rem .5rem;font-size:.8rem}
+ #v-form .narrow{max-width:520px}
+ #v-form .ci{font-size:1.05rem;margin:.7rem 0 .2rem}
+ #v-form .cip{font-size:.75rem;margin-bottom:.4rem}
+ #v-form .cgrid.hdr span{font-size:.68rem}
+ #v-form .drow .dt{width:260px}
+ #v-form .slotsarea{margin-top:.5rem!important;gap:1rem;grid-template-columns:150px 1fr 280px}
+ #v-form #weekdays{margin:.3rem 0}
+ #v-form #weekdays li{padding:.25rem .5rem;font-size:.72rem}
+ #v-form .grid button{padding:.2rem;font-size:.7rem}
+ #v-form .legend{margin:.3rem 0}
+ #v-form .tip{font-size:.7rem}
+ #v-form #chosen,#v-form #pickhint{padding:.4rem;font-size:.75rem;margin:.3rem 0}
+ #v-form .terms{font-size:.75rem;margin:.5rem 0 0}
+ #v-form button.red{padding:.6rem 1rem;margin-top:.5rem;font-size:.85rem}
+ #v-form .side-r{top:.5rem}
+</style></head><body data-drift="__DRIFT__" data-otp="__OTP__">
+<div id="botbadge" hidden></div>
+
+<div id="v-login" class="center"><div class="logincard"><h2>Sign in</h2>
+ <div class="in"><input id="email" data-testid="email" placeholder="Username or E-mail"></div>
+ <div class="in"><input id="password" data-testid="password" type="password" placeholder="Password"></div>
+ <button id="login" data-testid="login-btn" style="margin-top:.6rem;padding:.5rem 2.2rem">Sign in</button>
+ <a onclick="return false">Create New Account</a><a onclick="return false">Reset Password</a>
+ <p id="otphint" class="tip" style="margin-top:1rem">Enter any username and password to continue.</p></div></div>
+
+<div id="v-otp" class="center" hidden><div class="logincard"><h2>Enter the one-time code</h2>
+ <div class="in"><input id="otp" data-testid="otp-input" placeholder="6-digit code" inputmode="numeric"></div>
+ <button id="otpbtn" data-testid="otp-btn" style="padding:.5rem 2.2rem">Verify</button></div></div>
+
+<div class="portal" id="portal" hidden>
+ <nav id="side"><div class="logo"></div><div class="u">===<span id="uname"></span>===<b>VAC:[Karachi]</b></div>
+  <div class="m" id="nav-dash" data-testid="nav-dash">Dashboard</div>
+  <div class="m" id="nav-drafts" data-testid="nav-drafts">My Draft Applications</div>
+  <div class="m" id="nav-new" data-testid="nav-new">New Online Application</div>
+  <div class="m" id="nav-subm" data-testid="nav-subm">My Submitted Applications</div>
+  <div class="m" id="nav-track" data-testid="nav-track">Track my Application</div>
+  <div class="m" id="nav-appts" data-testid="nav-appts">My Appointments</div>
+  <div class="m" id="nav-book" data-testid="nav-book">Book Appointment</div>
+  <div class="m" id="nav-ins" data-testid="nav-ins">Book my Travel Medical Insurance</div>
+  <div class="foot">&copy; 2026 Appointment Portal<br><a>About</a> | <a>Terms of Service</a></div></nav>
+ <div class="content"><div class="top">☰</div><div class="page">
+
+ <section id="v-dash" hidden><h2>Dashboard</h2><div class="crumb">Welcome</div>
+  <div class="cards"><div class="cardx"><b id="d-drafts">0</b><span>Draft applications</span></div>
+   <div class="cardx"><b id="d-subm">0</b><span>Submitted applications</span></div>
+   <div class="cardx"><b id="d-appt">None</b><span>Upcoming appointment</span></div>
+   <div class="cardx"><b id="d-ins">0</b><span>Insurance policies</span></div></div>
+  <div class="notice">Appointments are offered to individual applicants and their families. Each account can hold one active appointment.</div>
+  <p><a id="dl-book">Book an appointment</a> &nbsp;|&nbsp; <a id="dl-new">Start a new application</a> &nbsp;|&nbsp; <a id="dl-track">Track an application</a></p></section>
+
+ <section id="v-drafts" hidden><h2>My Draft Applications</h2><div class="crumb">Applications saved but not yet submitted</div><div id="drafts-body"></div></section>
+
+ <section id="v-new" hidden><h2>New Online Application</h2><div class="crumb">Apply for a visa</div>
+  <label>Applicant full name *</label><input id="na-name">
+  <div class="row"><div><label>Passport number *</label><input id="na-pass"></div><div><label>Intended travel date *</label><input id="na-date" type="date"></div></div>
+  <label>Application type *</label><select id="na-type"><option>Short stay Schengen visa (Type C)</option><option>National visa (Type D)</option></select>
+  <div style="margin-top:1.2rem;display:flex;gap:.6rem"><button id="na-save" class="sec">Save as draft</button><button id="na-submit">Submit application</button></div></section>
+
+ <section id="v-subm" hidden><h2>My Submitted Applications</h2><div class="crumb">Applications sent for processing</div><div id="subm-body"></div></section>
+
+ <section id="v-track" hidden><h2>Track my Application</h2><div class="crumb">Enter your reference number and passport number</div>
+  <div class="row"><div><label>Reference number</label><input id="tr-ref" placeholder="APP000000000"></div><div><label>Passport number</label><input id="tr-pass"></div></div>
+  <button id="tr-go" style="margin-top:1rem">Track</button><div id="tr-result"></div></section>
+
+ <section id="v-appts" hidden><h2>My Appointments</h2><div class="crumb">Your booked appointments</div><div id="appts-body"></div></section>
+
+ <section id="v-form" hidden><h2>My Appointments | Add</h2><div class="crumb">Book Appointment</div>
+  <div class="notice">Appointments are offered to individual applicants and their families. Each account can hold one active appointment. Please book only the appointments you need.</div>
+  <div class="vac"><b>VAC:</b> Karachi Visa Application Center</div>
+  <div class="narrow">
+   <label>Appointment for *</label><select id="appt" data-testid="appt-for"><option value="">Select</option>
+    <option>Submission Schengen Visa (Short term - Type C)</option><option>Submission National Visa (Long term - Type D)</option></select>
+   <label>Booking as *</label><select data-testid="booking-as"><option>Individual</option><option>Family</option></select>
+   <label>E-mail *</label><input id="f-email" data-testid="form-email" readonly>
+   <label>Phone number *</label><div class="phone"><select><option>PAKISTAN +92</option></select><input id="phone" data-testid="phone"></div>
+  </div>
+  <div class="ci">Client Information</div><div class="cip">Please fill out the information of all the persons for this appointment.</div>
+  <div class="cgrid hdr"><span>Surname</span><span>Name</span><span>Date of Birth</span><span>Passport</span><span>Passport's Expiration Date</span><span>Gender</span><span>Nationality</span></div>
+  <div class="cgrid">
+   <input id="surname" data-testid="surname" class="up" autocomplete="off">
+   <input id="gname" data-testid="given-name" class="up" autocomplete="off">
+   <div class="dt"><input id="dob" data-testid="dob" placeholder="dd/mm/yyyy" autocomplete="off"><input type="date" tabindex="-1"><svg class="cal" viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zM5 9h14v11H5zm2 2v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2z"/></svg></div>
+   <input id="passport" data-testid="passport" class="up" autocomplete="off">
+   <div class="dt"><input id="pexp" data-testid="passport-exp" placeholder="dd/mm/yyyy" autocomplete="off"><input type="date" tabindex="-1"><svg class="cal" viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zM5 9h14v11H5zm2 2v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2z"/></svg></div>
+   <select id="gender" data-testid="gender"><option>MALE</option><option>FEMALE</option></select>
+   <select id="nat" data-testid="nationality"><option value="">Select</option><option>PAKISTAN</option><option>INDIA</option><option>AFGHANISTAN</option><option>BANGLADESH</option><option>SRI LANKA</option><option>UNITED KINGDOM</option></select>
+  </div>
+  <label style="margin-top:1.4rem">Appointment Date *</label>
+  <div class="drow"><div class="dt"><input id="date" data-testid="date-input" placeholder="dd/mm/yyyy" autocomplete="off"><input type="date" tabindex="-1"><svg class="cal" viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zM5 9h14v11H5zm2 2v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2z"/></svg></div>
+   <button id="search" data-testid="search-btn" class="srch">Search</button></div>
+  <div class="slotsarea" style="margin-top:1rem">
+   <div><ul id="weekdays"><li>Monday</li><li>Tuesday</li><li>Wednesday</li><li>Thursday</li><li>Friday</li><li>Saturday</li><li>Sunday</li></ul></div>
+   <div><div id="nodate" hidden>You cannot book an appointment on this date. Please choose another date.</div>
+    <div id="challenge" data-testid="challenge-box" hidden><b>Security check.</b> Type the word <b id="cword"></b> to continue.
+     <div class="row" style="margin-top:.5rem"><input id="cin" data-testid="challenge-input"><button id="cbtn" data-testid="challenge-btn">Verify</button></div></div>
+    <div class="legend"><span><i></i>Available appointments</span><span><i class="b"></i>Booked appointments</span></div>
+    <ul class="grid" id="slots" data-testid="slots-list"></ul></div>
+   <div class="side-r"><div id="chosen" hidden></div><div id="pickhint">Please select time slot to proceed with your reservation.</div>
+       <p class="tip">Please press BOOK APPOINTMENT from below to complete your reservation.</p>
+    <label class="terms"><input type="checkbox" id="terms" data-testid="terms">I have read and accepted the Terms of Use and Privacy Policy</label>
+    <button id="book" data-testid="book-btn" class="red">BOOK APPOINTMENT</button>
+    <p class="tip">* All time zones refer to our office local time</p></div></div></section>
+
+ <section id="v-pay" hidden><h2>Booking confirmation</h2><div class="crumb">Book Appointment</div>
+  <p id="claimed" data-testid="claimed" style="font-weight:700;color:#166534"></p>
+  <p>Your slot is reserved. Complete the payment to confirm your appointment. The payment page opens in a new tab.</p>
+  <button id="gopay" data-testid="pay-btn">Proceed to payment</button></section>
+
+ <section id="v-ins" hidden><h2>Book my Travel Medical Insurance</h2><div class="crumb">Choose a plan for your trip</div>
+  <div class="row"><div><label>Plan *</label><select id="in-plan"><option value="Basic">Basic - 12.00 GBP (cover up to 30,000 EUR)</option><option value="Standard">Standard - 21.00 GBP (cover up to 50,000 EUR)</option><option value="Premium">Premium - 34.00 GBP (cover up to 100,000 EUR)</option></select></div>
+   <div><label>Traveller full name *</label><input id="in-name"></div></div>
+  <div class="row"><div><label>Travel from *</label><input id="in-from" type="date"></div><div><label>Travel until *</label><input id="in-to" type="date"></div></div>
+  <button id="in-buy" style="margin-top:1rem">Buy insurance</button><div id="ins-body"></div></section>
+ </div></div></div>
+
+<p id="message" data-testid="message"></p>
+
+<div id="modal" hidden><div class="box"><h3><span>Payment amount</span><span id="mx" style="cursor:pointer">✕</span></h3>
+ <p>To proceed with this appointment you have to prepay the service with the following amount:</p>
+ <p>Service fee: 25.50 GBP<br>Extra service for this type of appointment: 0.00 GBP<br><b>TOTAL amount: 25.50 GBP</b></p>
+ <p><b>BOOKING CONFIRMATION</b><br>Once you agree, the slot is reserved for you and a secure payment page opens in a new tab. Accepted: credit, debit and prepaid cards.</p>
+ <p>Please read the terms and conditions before you proceed.</p><p><b>Do you agree?</b></p>
+ <div class="btns"><button id="no" data-testid="agree-no" style="background:#6b7280">No</button><button id="yes" data-testid="agree-yes">Yes</button></div></div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const drift = document.body.dataset.drift;
+if (drift === 'rename') document.querySelectorAll('[data-testid]').forEach(e => e.dataset.testid += '-v2');   // simulated markup change
+window.setBot = t => { const b = $('botbadge'); b.textContent = 'Bot: ' + t; b.hidden = false; };
+let token = null, email = '', picked = null, client = {};
+const VIEWS = ['login','otp','dash','drafts','new','subm','track','appts','form','pay','ins'];
+const NAVOF = { dash:'dash', drafts:'drafts', new:'new', subm:'subm', track:'track', appts:'appts', form:'book', pay:'book', ins:'ins' };
+const show = id => {
+  for (const v of VIEWS) $('v-'+v).hidden = v !== id;
+  $('portal').hidden = id === 'login' || id === 'otp';
+  document.querySelectorAll('#side .m').forEach(m => m.classList.toggle('on', m.id === 'nav-' + NAVOF[id]));
+};
+const msg = (t, retry) => { $('message').textContent = t || ''; if (retry) $('message').dataset.retryAfter = retry; };
+const dmy = d => d.split('-').reverse().join('/');
+const toISO = v => { const m = String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : ''; };
+const when = ts => new Date(ts).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+async function api(path, opts = {}) {
+  try {
+    const r = await fetch(path, { ...opts, headers: { 'content-type': 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}), ...(opts.headers || {}) } });
+    return { status: r.status, ok: r.ok, body: await r.json().catch(() => ({})), retry: r.headers.get('retry-after') };
+  } catch { return { status: 0, ok: false, body: {}, lost: true }; }
+}
+const post = (path, body) => api(path, { method: 'POST', body: JSON.stringify(body || {}) });
+function errText(r, booking) {
+  if (r.lost) return booking ? 'Outcome unknown: connection lost during booking' : 'Connection lost, retry';
+  if (r.status === 401 && token) return 'Session expired, please sign in again';
+  if (r.status === 403 && r.body.denied) return 'Access denied';
+  if (r.status === 403 && r.body.challenge) return 'Security check required';
+  if (r.status === 429) { msg('', r.retry); return `Rate limited, retry in ${r.retry || 2}s`; }
+  if (r.status === 409) return r.body.error === 'slot taken' ? 'Slot taken, pick another' : r.body.error;
+  return r.body.error || 'Error';
+}
+const openPay = (kind, id) => window.open(`/pay.html?kind=${kind}${id ? '&id=' + id : ''}#${token}`, '_blank');
+
+// ---------- sign in ----------
+if (document.body.dataset.otp === 'on') $('otphint').hidden = true;
+function enter() {                                      // open the portal after sign-in
+  $('f-email').value = email.includes('@') ? email : email + '@mailvault.pk'; $('uname').textContent = email.split('@')[0]; msg(''); go('dash');
+}
+$('login').onclick = async () => {
+  email = $('email').value.trim().toLowerCase();
+  const r = await post('/api/login', { email, password: $('password').value });
+  if (!r.ok) return msg(errText(r));
+  token = r.body.token; sessionStorage.setItem('t', token); msg('');
+  r.body.otpRequired ? show('otp') : enter();
+};
+$('password').onkeydown = $('email').onkeydown = e => { if (e.key === 'Enter') $('login').click(); };
+$('otpbtn').onclick = async () => {
+  const r = await post('/api/verify-otp', { code: $('otp').value });
+  if (!r.ok) return msg(errText(r));
+  enter();
+};
+
+// ---------- menu ----------
+async function go(name) {
+  msg('');
+  if (name === 'dash') {
+    const r = await api('/api/portal/dashboard'); const d = r.body;
+    $('d-drafts').textContent = d.drafts ?? 0; $('d-subm').textContent = d.submitted ?? 0; $('d-ins').textContent = d.insurance ?? 0;
+    $('d-appt').textContent = d.appointment ? `${dmy(d.appointment.date)} ${d.appointment.time}` : 'None';
+    return show('dash');
+  }
+  if (name === 'drafts' || name === 'subm') {
+    const r = await api('/api/portal/applications'); const list = name === 'drafts' ? (r.body.drafts || []) : (r.body.submitted || []);
+    if (!list.length) $(name + '-body').innerHTML = `<div class="empty">${name === 'drafts' ? 'You have no draft applications.' : 'You have not submitted any applications yet.'}</div>`;
+    else if (name === 'drafts') $('drafts-body').innerHTML = `<table class="tbl"><tr><th>Applicant</th><th>Passport</th><th>Type</th><th>Travel date</th><th>Saved</th><th></th></tr>` +
+      list.map(a => `<tr><td>${esc(a.applicant)}</td><td>${esc(a.passport)}</td><td>${esc(a.type)}</td><td>${dmy(a.travelDate)}</td><td>${when(a.created)}</td>
+        <td><button class="sm" data-submit="${a.id}">Submit</button> <button class="sm sec" data-del="${a.id}">Delete</button></td></tr>`).join('') + '</table>';
+    else $('subm-body').innerHTML = `<table class="tbl"><tr><th>Reference</th><th>Applicant</th><th>Type</th><th>Travel date</th><th>Submitted</th><th>Status</th></tr>` +
+      list.map(a => `<tr><td><b>${a.ref}</b></td><td>${esc(a.applicant)}</td><td>${esc(a.type)}</td><td>${dmy(a.travelDate)}</td><td>${when(a.submitted)}</td><td><span class="pill">Under review</span></td></tr>`).join('') + '</table>';
+    return show(name);
+  }
+  if (name === 'new') { for (const i of ['na-name','na-pass','na-date']) $(i).value = ''; return show('new'); }
+  if (name === 'track') { $('tr-result').innerHTML = ''; return show('track'); }
+  if (name === 'appts') {
+    const r = await api('/api/portal/appointments'); const list = r.body.appointments || [];
+    $('appts-body').innerHTML = list.length ? `<table class="tbl"><tr><th>Date</th><th>Time</th><th>Center</th><th>Fee</th><th>Payment</th><th></th></tr>` +
+      list.map(a => `<tr><td>${dmy(a.date)}</td><td>${a.time}</td><td>${a.center}</td><td>${a.fee.toFixed(2)} GBP</td>
+        <td><span class="pill ${a.paid ? 'ok' : ''}">${a.paid ? 'Paid' : 'Payment pending'}</span></td>
+        <td>${a.paid ? '' : '<button class="sm" data-payappt="1">Pay now</button>'}</td></tr>`).join('') + '</table>'
+      : '<div class="empty">You have no appointments. <a id="ap-book">Book an appointment</a></div>';
+    const ab = $('ap-book'); if (ab) ab.onclick = () => go('book');
+    return show('appts');
+  }
+  if (name === 'book') { return show('form'); }
+  if (name === 'ins') {
+    const r = await api('/api/portal/insurance'); const list = r.body.policies || [];
+    $('ins-body').innerHTML = list.length ? `<h3 style="margin-top:1.4rem;color:#6b7280">My policies</h3><table class="tbl"><tr><th>Plan</th><th>Traveller</th><th>Travel dates</th><th>Price</th><th>Payment</th><th></th></tr>` +
+      list.map(p => `<tr><td>${p.plan}</td><td>${esc(p.traveller)}</td><td>${dmy(p.fromDate)} - ${dmy(p.toDate)}</td><td>${p.price.toFixed(2)} GBP</td>
+        <td><span class="pill ${p.paid ? 'ok' : ''}">${p.paid ? 'Paid' : 'Payment pending'}</span></td><td>${p.paid ? '' : `<button class="sm" data-payins="${p.id}">Pay now</button>`}</td></tr>`).join('') + '</table>' : '';
+    return show('ins');
+  }
+}
+for (const n of ['dash','drafts','new','subm','track','appts','book','ins']) $('nav-' + n).onclick = () => go(n);
+$('dl-book').onclick = () => go('book'); $('dl-new').onclick = () => go('new'); $('dl-track').onclick = () => go('track');
+
+document.addEventListener('click', async e => {
+  const t = e.target; if (!(t instanceof HTMLElement)) return;
+  if (t.dataset.submit) { const r = await post(`/api/portal/applications/${t.dataset.submit}/submit`); r.ok ? go('subm') : msg(errText(r)); }
+  if (t.dataset.del) { const r = await api(`/api/portal/applications/${t.dataset.del}`, { method: 'DELETE' }); r.ok ? go('drafts') : msg(errText(r)); }
+  if (t.dataset.payappt) openPay('appointment');
+  if (t.dataset.payins) openPay('insurance', t.dataset.payins);
+});
+
+// ---------- new application ----------
+async function saveApp(submit) {
+  const r = await post('/api/portal/applications', { applicant: $('na-name').value.trim(), passport: $('na-pass').value.trim(), type: $('na-type').value, travelDate: $('na-date').value, submit });
+  r.ok ? go(submit ? 'subm' : 'drafts') : msg(errText(r));
+}
+$('na-save').onclick = () => saveApp(false); $('na-submit').onclick = () => saveApp(true);
+
+// ---------- track ----------
+$('tr-go').onclick = async () => {
+  const r = await api(`/api/portal/track?ref=${encodeURIComponent($('tr-ref').value)}&passport=${encodeURIComponent($('tr-pass').value)}`);
+  if (!r.ok) { $('tr-result').innerHTML = `<div class="empty">${esc(r.body.error || errText(r))}</div>`; return; }
+  const steps = ['Application received', 'Documents checked', 'Under review', 'Decision made'], s = r.body.stage;
+  $('tr-result').innerHTML = `<p style="margin-top:1rem"><b>${r.body.ref}</b> | ${esc(r.body.applicant)} | ${esc(r.body.type)}</p><ul class="tl">` +
+    steps.map((x, i) => `<li class="${i < s ? 'done' : i === s ? 'cur' : ''}">${x}${i < s ? ' - completed' : i === s ? ' - in progress' : ''}</li>`).join('') + '</ul>';
+};
+
+// ---------- insurance ----------
+$('in-buy').onclick = async () => {
+  const r = await post('/api/portal/insurance', { plan: $('in-plan').value, traveller: $('in-name').value.trim(), fromDate: $('in-from').value, toDate: $('in-to').value });
+  if (!r.ok) return msg(errText(r));
+  openPay('insurance', r.body.id); go('ins');
+};
+
+// ---------- book appointment ----------
+document.querySelectorAll('.dt').forEach(dt => {
+  const txt = dt.querySelector('input:not([type=date])'), nat = dt.querySelector('input[type=date]'), cal = dt.querySelector('.cal');
+  cal.onclick = () => { nat.value = toISO(txt.value); try { nat.showPicker(); } catch { nat.focus(); } };
+  nat.onchange = () => { if (nat.value) { txt.value = dmy(nat.value); txt.dispatchEvent(new Event('input', { bubbles: true })); } };
+});
+const collectClient = () => ({ appointment_for: $('appt').value, surname: $('surname').value.trim(), name: $('gname').value.trim(), passport: $('passport').value.trim(),
+  passportExp: toISO($('pexp').value), dob: toISO($('dob').value), gender: $('gender').value, nationality: $('nat').value, phone: $('phone').value.trim() });
+async function search() {
+  const date = toISO($('date').value), list = $('slots');
+  list.innerHTML = ''; picked = null; msg(''); $('challenge').hidden = true; $('nodate').hidden = true;
+  $('chosen').hidden = true; $('pickhint').hidden = false;
+  if (!date) { msg('Please enter the appointment date as dd/mm/yyyy'); return; }
+  const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const dow = date ? names[new Date(date + 'T00:00:00').getDay()] : '';
+  document.querySelectorAll('#weekdays li').forEach(li => li.classList.toggle('on', li.textContent === dow));
+  const r = await api('/api/slots?date=' + encodeURIComponent(date));
+  if (r.status === 403 && r.body.challenge) { $('cword').textContent = r.body.word; $('cin').value = ''; $('challenge').hidden = false; }
+  if (!r.ok) msg(errText(r)); else if (!r.body.slots.length) $('nodate').hidden = false;
+  for (const s of (r.ok ? r.body.slots : [])) {
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.textContent = s.time; b.dataset.testid = 'slot-' + s.id + (drift === 'rename' ? '-v2' : ''); b.disabled = s.booked;
+    b.onclick = () => { picked = s; list.querySelectorAll('button').forEach(x => x.classList.remove('sel')); b.classList.add('sel');
+      $('chosen').textContent = `You have chosen to book appointment(s) on ${dmy(date)} at ${s.time}`; $('chosen').hidden = false; $('pickhint').hidden = true; $('book').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+    li.appendChild(b); list.appendChild(li);
+  }
+  list.dataset.date = date;            // lets automation know the list for this date has rendered
+}
+$('search').onclick = search;
+$('cbtn').onclick = async () => {
+  const r = await post('/api/challenge/solve', { answer: $('cin').value });
+  if (r.ok) { $('challenge').hidden = true; search(); } else msg('Wrong answer, try again');
+};
+$('book').onclick = () => {
+  client = collectClient();
+  if (!client.appointment_for || !client.surname || !client.name || !client.passport || !client.dob) return msg('Please fill the required fields');
+  if (!picked) return msg('Please select a time slot');
+  if (!$('terms').checked) return msg('Please accept the terms');
+  msg(''); $('modal').hidden = false;
+};
+$('no').onclick = $('mx').onclick = () => { $('modal').hidden = true; };
+$('yes').onclick = async () => {
+  msg('');
+  const r = await api('/api/book', { method: 'POST', body: JSON.stringify({ slotId: picked.id, client }), headers: { 'idempotency-key': crypto.randomUUID() } });
+  $('modal').hidden = true;
+  if (r.status === 201) {
+    const c = $('claimed'); c.textContent = `Appointment claimed: ${dmy(r.body.date)} at ${r.body.time}`; c.dataset.slot = `${r.body.date} ${r.body.time}`;
+    show('pay'); openPay('appointment'); return;                       // payment page opens in its own tab
+  }
+  const text = errText(r, true);
+  if (r.lost) return msg(text);                       // do not guess: the booking may have been saved
+  if (r.status === 403 && r.body.challenge) { await search(); return msg(text); }
+  if (r.status === 409) { await search(); return msg(text); }
+  msg(text);
+};
+$('gopay').onclick = () => openPay('appointment');
+</script></body></html>
