@@ -9,7 +9,8 @@ import { loadVault, hashPw, redact } from './secrets.js';
 import { ensureSlots, listSlots, myBooking, tryBook, audit, listRuns, markPaid, createApplication, listApplications, submitApplication,
   deleteDraft, trackApplication, appointmentInfo, createInsurance, listInsurance, insuranceById, payInsurance, portalCounts } from './db.js';
 
-const PORT = 3000, BASE = `http://localhost:${PORT}`;
+// CHANGE 1: use the port Render provides (falls back to 3000 locally). BASE stays localhost because the bot's browser runs in the same container.
+const PORT = Number(process.env.PORT) || 3000, BASE = `http://localhost:${PORT}`;
 const RATE_LIMIT_PER_SEC = 10, MAX_OTP_ATTEMPTS = 3, MAX_OTP_SENDS = 5, BAN_STRIKES = 5;
 
 // ---------- accounts (random passwords live in the encrypted vault; the server only keeps hashes) ----------
@@ -30,6 +31,18 @@ function resetState() { ensureSlots(true); sessions = new Map(); otps = new Map(
 ensureSlots();
 
 const app = express();
+
+// CHANGE 3: password-protect the control panel (set PANEL_USER and PANEL_PASS in Render).
+// Only the panel page and /api/panel are guarded, so the bot's own requests to the portal are unaffected.
+const PANEL_USER = process.env.PANEL_USER, PANEL_PASS = process.env.PANEL_PASS;
+if (PANEL_USER && PANEL_PASS) {
+  app.use(['/app.html', '/api/panel'], (req: Request, res: Response, next: NextFunction) => {
+    const [u, p] = Buffer.from((req.headers.authorization || '').replace(/^Basic /, ''), 'base64').toString().split(':');
+    if (u === PANEL_USER && p === PANEL_PASS) return next();
+    res.set('WWW-Authenticate', 'Basic realm="lab"').status(401).send('Authentication required');
+  });
+}
+
 app.use(express.json());
 app.use(express.raw({ type: 'application/octet-stream', limit: '5mb' }));
 app.get('/', (_req, res) => res.redirect('/app.html'));
@@ -257,4 +270,5 @@ app.get('/api/panel/report.csv', (_req, res) => {
   res.type('text/csv').attachment('benchmark.csv').send([cols.join(','), ...runs.map(r => cols.map(c => r[c]).join(','))].join('\n'));
 });
 
-app.listen(PORT, 'localhost', () => console.log(`Lab running:\n  Control panel: ${BASE}/app.html\n  Portal:        ${BASE}/site.html`));
+// CHANGE 2: listen on all interfaces so Render can reach the server.
+app.listen(PORT, '0.0.0.0', () => console.log(`Lab running:\n  Control panel: ${BASE}/app.html\n  Portal:        ${BASE}/site.html`));
